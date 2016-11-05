@@ -1,7 +1,5 @@
-print "panda"
 import pandas as pd
-print "cv2"
-print "sys"
+import cv2
 import sys
 import math
 sys.path.append("/home/yomna/GraduationProject/openface/openface")

@@ -73,6 +73,6 @@ def compareRects(muchtRects,modelRects):
        
 
 my_data = genfromtxt('/home/yomna/GraduationProject/openface/muct-master/muct-landmarks/muct76-opencv.csv'
-    , delimiter=',', dtype =None)[1:3]
+    , delimiter=',', dtype =None)[1:]
 print "Loaded"
 compareRects(muchtDatasetRects(my_data), dataModelOpenface(my_data))

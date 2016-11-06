@@ -11,7 +11,7 @@ from numpy import genfromtxt
 def muchtDatasetRects(my_data):
     muchtRects = []
 
-    for row in my_data[1:]:
+    for row in my_data[0:]:
         points = [(int(float(row[i+2])), int(float(row[i+3]))) for i in range(0, len(row)-2,2)]
         x,y,w,h = cv2.boundingRect(np.array([points]))
         
@@ -22,20 +22,34 @@ def muchtDatasetRects(my_data):
 
 def dataModelOpenface(my_data):
     modelRects = []
+    i = 0
     dl = AlignDlib("/home/yomna/GraduationProject/openface/models/dlib/shape_predictor_68_face_landmarks.dat")
     for j in range(len(my_data)):
         img = cv2.imread('/home/yomna/GraduationProject/openface/muct-master/jpg'+ str((j % 5) + 1) + '/' + my_data[j][0] + '.jpg')
+        if img is None:
+            i = i + 1
+            continue
         rect = dl.getAllFaceBoundingBoxes(img)
+        if(len(rect)== 0):
+            continue
         rectObject = rect[0]
         rectPoints = (rectObject.left(), rectObject.top(), rectObject.right(),rectObject.bottom())
+        print rectPoints
+        print j
         modelRects.append(rectPoints)
+    print 'number of images not found = ',i
     return modelRects
 
 
 def compareRects(muchtRects,modelRects):
     print muchtRects[0], modelRects[0]
+    print len(muchtRects)
+    print len(modelRects)
     distance = 0 
-    for i in range(len(muchtRects)):
+    for i in range(len(modelRects)):
+        #openface model can't detect some faces so length of rects eual zero
+        if(len(modelRects[i]) == 0):
+            continue
         ### calculating distance
         ## real points 
         rx = muchtRects[i][0]
@@ -65,8 +79,7 @@ def compareRects(muchtRects,modelRects):
                                 pP4 = (px+pw, py+ph) #pridected first point"""
         
         distance += math.sqrt( math.pow(rP1[0]-pP1[0], 2) + math.pow(rP2[0]-pP2[0], 2) + math.pow(rP3[0]-pP3[0], 2) + math.pow(rP4[0]-pP4[0], 2) +
-                     math.pow(rP1[1]-pP1[1], 2) + math.pow(rP2[1]-pP2[1], 2) + math.pow(rP3[1]-pP3[1], 2) + math.pow(rP4[1]-pP4[1], 2))/2
-    
+                     math.pow(rP1[1]-pP1[1], 2) + math.pow(rP2[1]-pP2[1], 2) + math.pow(rP3[1]-pP3[1], 2) + math.pow(rP4[1]-pP4[1], 2))/3751
     print "Error between Real and Predicted is " + str(distance)
        
 
